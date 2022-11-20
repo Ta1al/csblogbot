@@ -8,6 +8,7 @@
     "build:watch": "tsc -w",
     "start": "node .",
     "start:watch": "nodemon .",
+    "register": "node dist/register.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
   },
