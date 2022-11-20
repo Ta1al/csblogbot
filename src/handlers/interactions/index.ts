@@ -1,8 +1,10 @@
 import { Interaction, CommandInteraction, MessageComponentInteraction } from "discord.js";
-import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
+import {
+  ApplicationCommandType as CommandType,
+  RESTPostAPIApplicationCommandsJSONBody
+} from "discord-api-types/v10";
 import handleChatInput from "./chatInput";
 import handleComponent from "./component";
-
 
 export default async function handleInteraction(interaction: Interaction) {
   try {
@@ -23,4 +25,14 @@ interface Component {
   name: string;
   hasPermission?(interaction: MessageComponentInteraction): boolean;
   execute: (interaction: MessageComponentInteraction) => Promise<void>;
+}
+
+export function makeCustomId(command: Command, id: string): string {
+  const types = {
+    1: "chatInput",
+    2: "user",
+    3: "message"
+  };
+
+  return `${types[command.data.type ?? CommandType.ChatInput]}:${command.data.name}:${id}`;
 }
