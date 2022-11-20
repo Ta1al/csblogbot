@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { ActivityType, Client, GatewayIntentBits } from "discord.js";
+import handleInteraction from "./handlers/interactions";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -11,5 +12,7 @@ const client = new Client({
 });
 
 client.once("ready", () => console.log("Ready!"));
+
+client.on("interactionCreate", handleInteraction);
 
 client.login(process.env.TOKEN);
