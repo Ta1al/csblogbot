@@ -1,7 +1,11 @@
 import "dotenv/config";
-import { Client, GatewayIntentBits } from "discord.js";
+import { ActivityType, Client, GatewayIntentBits } from "discord.js";
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds], allowedMentions: { parse: [] } });
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds],
+  allowedMentions: { parse: [] },
+  presence: { activities: [{ name: "CSGO Blog", type: ActivityType.Watching }], status: "online" }
+});
 
 client.once("ready", () => {
   console.log("Ready!");
