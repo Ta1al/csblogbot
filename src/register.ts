@@ -16,7 +16,7 @@ import fs from "fs/promises";
     commands = await Promise.all(
       filePaths.map(async file => {
         const command = (await import(`./commands/${file}`)).default;
-        console.log(file, command);
+        command.data.name = file.split("/")[1];
         return command.data;
       })
     );
