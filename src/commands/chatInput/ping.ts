@@ -8,6 +8,6 @@ export default {
   },
 
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-    return void await interaction.reply("Pong!");
+    return void (await interaction.reply("Pong!"));
   }
 } as Command;
