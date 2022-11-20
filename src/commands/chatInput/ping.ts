@@ -3,11 +3,13 @@ import { Command } from "../../handlers/interactions";
 
 export default {
   data: {
-    name: "ping",
-    description: "Replies with Pong!"
+    description: "Client WebSocket ping"
   },
 
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-    return void (await interaction.reply("Pong!"));
+    return void (await interaction.reply({
+      content: `${interaction.client.ws.ping}ms`,
+      ephemeral: true
+    }));
   }
 } as Command;
