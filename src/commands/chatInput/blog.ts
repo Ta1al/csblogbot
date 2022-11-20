@@ -1,9 +1,16 @@
 import { Command } from "../../handlers/interactions";
-import { ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 
 export default {
   data: {
-    description: "Get the latest posts from CSGO Blog"
+    description: "Get the latest posts from CSGO Blog",
+    options: [
+      {
+        type: ApplicationCommandOptionType.Number,
+        name: "page",
+        description: "Page number",
+      }
+    ]
   },
 
   execute: async (interaction: ChatInputCommandInteraction) => {
