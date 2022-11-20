@@ -1,4 +1,5 @@
-import { Interaction } from "discord.js";
+import { Interaction, CommandInteraction } from "discord.js";
+import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
 import handleChatInput from "./ChatInput";
 
 
@@ -9,4 +10,9 @@ export default async function handleInteraction(interaction: Interaction) {
   } catch (error) {
     console.error(error);
   }
+}
+
+export interface Command {
+  data: RESTPostAPIApplicationCommandsJSONBody;
+  execute(interaction: CommandInteraction): Promise<void>;
 }
