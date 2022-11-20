@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { Command } from "../../handlers/interactions/ChatInput";
+import { Command } from "../../handlers/interactions";
 
 export default {
   data: {
