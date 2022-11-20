@@ -5,15 +5,11 @@ import {
 } from "discord-api-types/v10";
 import handleChatInput from "./chatInput";
 import handleComponent from "./component";
-import handleUserContext from "./user";
-import handleMessageContext from "./message";
 
 export default async function handleInteraction(interaction: Interaction) {
   try {
     if (interaction.isChatInputCommand()) return handleChatInput(interaction);
     if (interaction.isMessageComponent()) return handleComponent(interaction);
-    if (interaction.isUserContextMenuCommand()) return handleUserContext(interaction);
-    if (interaction.isMessageContextMenuCommand()) return handleMessageContext(interaction);
   } catch (error) {
     console.error(error);
   }
