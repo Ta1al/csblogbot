@@ -1,24 +1,36 @@
 import "dotenv/config";
 import { REST, Routes } from "discord.js";
-import { RESTPutAPIApplicationCommandsJSONBody as Commands } from "discord-api-types/v10";
-import fs from "fs";
-import { Command } from "./handlers/interactions/ChatInput";
-
-const commands: Commands = [];
-fs.readdirSync("./commands/").forEach(folder => {
-  fs.readdirSync(`./commands/${folder}`).forEach(async file => {
-    const command = (await import(`../commands/${folder}/${file}`)) as Command;
-    commands.push(command.data);
-  });
-});
-
-const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
-if (!TOKEN) throw new Error("TOKEN is not defined in the environment");
-if (!CLIENT_ID) throw new Error("CLIENT_ID is not defined in the environment");
-
-const rest = new REST({ version: "10" }).setToken(TOKEN);
+import fs from "fs/promises";
 
 (async () => {
+  const folders = await fs.readdir(`${__dirname}/commands/`),
+    filePaths = (
+      await Promise.all(
+        folders.map(async folder =>
+          (
+            await fs.readdir(`${__dirname}/commands/${folder}/`)
+          ).map(file => `${folder}/${file.split(".")[0]}`)
+        )
+      )
+    ).flat(),
+    commands = await Promise.all(
+      filePaths.map(async file => {
+        const command = (await import(`./commands/${file}`)).default;
+        console.log(file, command);
+        return command.data;
+      })
+    );
+
+  await registerCommands(commands);
+})();
+
+async function registerCommands(commands: unknown[]) {
+  const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
+  if (!TOKEN) throw new Error("TOKEN is not defined in the environment");
+  if (!CLIENT_ID) throw new Error("CLIENT_ID is not defined in the environment");
+
+  const rest = new REST({ version: "10" }).setToken(TOKEN);
+
   try {
     console.log("Refreshing Application Commands.");
 
@@ -33,4 +45,4 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
   } catch (error) {
     console.error(error);
   }
-})();
+}
