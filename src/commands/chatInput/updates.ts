@@ -72,7 +72,7 @@ function makeEmbed(post: Post): EmbedBuilder {
   return new EmbedBuilder()
     .setTitle(post.title)
     .setURL(post.link)
-    .setTimestamp(post.date)
+    .setFooter({ text: post.date.toDateString() })
     .setDescription(post.content.slice(0, 4096))
     .setImage(post.image)
     .setColor("#2f3136");
