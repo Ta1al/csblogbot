@@ -7,15 +7,14 @@ A bot that posts the latest CS blog posts to a Discord channel
 ##### `/blog [page]` - Returns blog posts
 <details>
    <summary>See Usage</summary>
-   
-   ![DiscordCanary_kfqK6hiRC3](https://user-images.githubusercontent.com/43641182/204455735-1ca3ab61-179d-428e-b579-aef62f46f560.gif)
+   <img src="https://user-images.githubusercontent.com/43641182/204455735-1ca3ab61-179d-428e-b579-aef62f46f560.gif" height="500"/>
 </details>
 
 ##### `/updates [page]` - Returns update posts
 <details>
    <summary>See Usage</summary>
    
-   ![DiscordCanary_fgMbRCS6Dx](https://user-images.githubusercontent.com/43641182/204456699-8be95638-7bbe-4ba6-9e7b-310d48b107ef.gif)
+   <img src="https://user-images.githubusercontent.com/43641182/204456699-8be95638-7bbe-4ba6-9e7b-310d48b107ef.gif" height="500"/>
 </details>
 
 ## For Self-Hosting
