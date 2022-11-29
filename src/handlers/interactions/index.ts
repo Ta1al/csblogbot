@@ -1,4 +1,4 @@
-import { Interaction, CommandInteraction, MessageComponentInteraction } from "discord.js";
+import { Interaction, CommandInteraction, MessageComponentInteraction, Collection } from "discord.js";
 import {
   ApplicationCommandType as CommandType,
   RESTPostAPIApplicationCommandsJSONBody
@@ -18,6 +18,7 @@ export default async function handleInteraction(interaction: Interaction) {
 export interface Command {
   data: RESTPostAPIApplicationCommandsJSONBody;
   components?: Component[];
+  cache?: Collection<unknown, unknown>;
   execute(interaction: CommandInteraction): Promise<void>;
 }
 
