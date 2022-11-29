@@ -21,7 +21,8 @@ const command: Command = {
       {
         type: ApplicationCommandOptionType.Number,
         name: "page",
-        description: "Page number"
+        description: "Page number",
+        min_value: 1
       }
     ]
   },
@@ -45,7 +46,7 @@ const command: Command = {
 
   cache: new Collection<number, Post[]>(),
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const page = interaction.options.getNumber("page") || 0,
+    const page = interaction.options.getNumber("page") || 1,
       posts = await getPosts(page);
     if (!posts || !posts.length) return void interaction.reply("No posts found");
 
