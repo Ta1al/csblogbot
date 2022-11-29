@@ -33,7 +33,7 @@ const command: Command = {
       execute: async (interaction: MessageComponentInteraction) => {
         if (!interaction.isStringSelectMenu()) return;
         const page = parseInt(interaction.customId.split(":")[3]),
-          posts = await getUpdatePosts(page),
+          posts = await getPosts(page),
           selectedPost = parseInt(interaction.values[0]),
           embeds = makeEmbeds(posts[selectedPost]),
           components = makeComponents(page, posts, selectedPost);
@@ -44,7 +44,7 @@ const command: Command = {
 
   execute: async (interaction: ChatInputCommandInteraction) => {
     const page = interaction.options.getNumber("page") || 0,
-      posts = await getUpdatePosts(page).catch(() => []);
+      posts = await getPosts(page);
     if (!posts || !posts.length) return void interaction.reply("No posts found");
 
     const embeds = makeEmbeds(posts[0]),
@@ -54,6 +54,16 @@ const command: Command = {
 };
 
 export default command;
+
+async function getPosts(page: number) {
+  let posts = command.cache?.get(page) as Post[];
+  if (!posts) {
+    posts = await getUpdatePosts(page).catch(() => []);
+    command.cache?.set(page, posts);
+    setTimeout(() => command.cache?.delete(page), 60e4);
+  }
+  return posts;
+}
 
 function makeComponents(
   page: number,

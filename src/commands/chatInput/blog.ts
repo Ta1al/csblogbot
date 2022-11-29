@@ -7,7 +7,8 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   MessageComponentInteraction,
-  StringSelectMenuBuilder
+  StringSelectMenuBuilder,
+  Collection
 } from "discord.js";
 import { getBlogPosts, Post } from "csblogscraper";
 import { makeCustomId } from "../../handlers/interactions/index";
@@ -33,7 +34,7 @@ const command: Command = {
       execute: async (interaction: MessageComponentInteraction) => {
         if (!interaction.isStringSelectMenu()) return;
         const page = parseInt(interaction.customId.split(":")[3]),
-          posts = await getBlogPosts(page),
+          posts = await getPosts(page),
           selectedPost = parseInt(interaction.values[0]),
           embeds = makeEmbeds(posts[selectedPost]),
           components = makeComponents(page, posts, selectedPost);
@@ -42,9 +43,10 @@ const command: Command = {
     }
   ],
 
+  cache: new Collection<number, Post[]>(),
   execute: async (interaction: ChatInputCommandInteraction) => {
     const page = interaction.options.getNumber("page") || 0,
-      posts = await getBlogPosts(page).catch(() => []);
+      posts = await getPosts(page);
     if (!posts || !posts.length) return void interaction.reply("No posts found");
 
     const embeds = makeEmbeds(posts[0]),
@@ -54,6 +56,16 @@ const command: Command = {
 };
 
 export default command;
+
+async function getPosts(page: number) {
+  let posts = command.cache?.get(page) as Post[];
+  if (!posts) {
+    posts = await getBlogPosts(page).catch(() => []);
+    command.cache?.set(page, posts);
+    setTimeout(() => command.cache?.delete(page), 60e4);
+  }
+  return posts;
+}
 
 function makeComponents(
   page: number,
