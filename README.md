@@ -34,6 +34,7 @@ A bot that posts the latest CS blog posts to a Discord channel
    | ----------- | ------------------------------ | -------- |
    | `TOKEN`     | Bot Token                      | Yes      |
    | `CLIENT_ID` | Bot ID                         | Yes      |
+   | `MONGO_URI` | Database URI for storing channels | Yes      |
    | `GUILD_ID`  | Guild for registering commands | No       |
 
 4. ##### Run the bot
