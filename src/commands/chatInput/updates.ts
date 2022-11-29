@@ -72,13 +72,15 @@ function makeComponents(
 ): ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>[] {
   return [
     new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-      new StringSelectMenuBuilder().setCustomId(makeCustomId(command, `blog:${page}`)).setOptions(
-        posts.map((post, i) => ({
-          label: post.title,
-          description: post.date.toDateString(),
-          value: `${i}`
-        }))
-      )
+      new StringSelectMenuBuilder()
+        .setCustomId(makeCustomId(command, `updates:${page}`))
+        .setOptions(
+          posts.map((post, i) => ({
+            label: post.title,
+            description: post.date.toDateString(),
+            value: `${i}`
+          }))
+        )
     ),
     new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
