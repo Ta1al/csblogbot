@@ -1,11 +1,22 @@
 import {
   ApplicationCommandOptionType,
+  ButtonStyle,
   ChatInputCommandInteraction,
+  ComponentType,
   GuildMember,
   PermissionFlagsBits,
   TextBasedChannel
 } from "discord.js";
+import { Schema, model } from "mongoose";
 import { Command } from "../../handlers/interactions";
+
+const schema = new Schema({
+  guildId: { type: String, required: true },
+  channelId: { type: String, required: true },
+  type: { type: String, required: true }
+});
+
+const Model = model("channels", schema);
 
 const command: Command = {
   data: {
@@ -45,12 +56,56 @@ const command: Command = {
       return void interaction.reply({
         content:
           "❌ Invalid channel\n\n" +
-          "> The channel is not a text channel or I'm missing permissions" +
-          "(`View Channel` or `Send Message`)",
+          "> The channel is not a text channel or I'm missing permissions\n\n" +
+          "I need the following permissions:\n" +
+          "```View Channel | Send Messages | Embed Links```",
         ephemeral: true
       });
 
-    return void interaction.reply({ content: `${type} ${channel}`, ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
+    const document = await Model.findOne({ guildId: interaction.guild.id, type });
+    if (document) {
+      if (document.channelId === channel.id) {
+        return void interaction.editReply({
+          content: `❌ This channel is already setup to receive ${type} posts`
+        });
+      }
+      return void interaction.editReply({
+        content:
+          `⚠ <#${document.channelId}> is already setup for ${type} posts. ` +
+          `Do you want to change it to <#${channel.id}>?`,
+        components: [
+          {
+            type: ComponentType.ActionRow,
+            components: [
+              {
+                type: ComponentType.Button,
+                style: ButtonStyle.Danger,
+                label: "Yes, change it",
+                customId: "yes"
+              },
+              {
+                type: ComponentType.Button,
+                style: ButtonStyle.Primary,
+                label: "No, keep it",
+                customId: "no"
+              }
+            ]
+          }
+        ]
+      });
+    } else {
+      const newDocument = new Model({
+        guildId: interaction.guild.id,
+        channelId: channel.id,
+        type
+      });
+      await newDocument.save();
+      channel.send(`🎉 I will now send ${type} posts here.`);
+      return void interaction.editReply({
+        content: `✅ <#${channel.id}> is now setup for ${type} posts.`
+      });
+    }
   }
 };
 
