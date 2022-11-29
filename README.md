@@ -5,10 +5,18 @@ A bot that posts the latest CS blog posts to a Discord channel
 
 ## Commands
 ##### `/blog [page]` - Returns blog posts
-![DiscordCanary_kfqK6hiRC3](https://user-images.githubusercontent.com/43641182/204455735-1ca3ab61-179d-428e-b579-aef62f46f560.gif)
+<details>
+   <summary>See Usage</summary>
+   
+   ![DiscordCanary_kfqK6hiRC3](https://user-images.githubusercontent.com/43641182/204455735-1ca3ab61-179d-428e-b579-aef62f46f560.gif)
+</details>
 
 ##### `/updates [page]` - Returns update posts
-![DiscordCanary_fgMbRCS6Dx](https://user-images.githubusercontent.com/43641182/204456699-8be95638-7bbe-4ba6-9e7b-310d48b107ef.gif)
+<details>
+   <summary>See Usage</summary>
+   
+   ![DiscordCanary_fgMbRCS6Dx](https://user-images.githubusercontent.com/43641182/204456699-8be95638-7bbe-4ba6-9e7b-310d48b107ef.gif)
+</details>
 
 ## For Self-Hosting
 
@@ -23,11 +31,11 @@ A bot that posts the latest CS blog posts to a Discord channel
    ```
 
 3. ##### Rename `.env.example` to `.env` and fill in the values
-   | Variable | Description | Required |
-    | -------- | ----------- | -------- |
-    | `TOKEN` | Bot Token | Yes |
-    | `CLIENT_ID` | Bot ID | Yes |
-    | `GUILD_ID` | Guild for registering commands | No |
+   | Variable    | Description                    | Required |
+   | ----------- | ------------------------------ | -------- |
+   | `TOKEN`     | Bot Token                      | Yes      |
+   | `CLIENT_ID` | Bot ID                         | Yes      |
+   | `GUILD_ID`  | Guild for registering commands | No       |
 
 4. ##### Run the bot
    ```sh
