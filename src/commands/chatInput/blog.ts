@@ -1,10 +1,13 @@
 import { Command } from "../../handlers/interactions";
 import {
+  ActionRowBuilder,
   ApplicationCommandOptionType,
+  ButtonBuilder,
+  ButtonStyle,
   ChatInputCommandInteraction,
-  ComponentType,
   EmbedBuilder,
-  MessageComponentInteraction
+  MessageComponentInteraction,
+  StringSelectMenuBuilder
 } from "discord.js";
 import { getBlogPosts, Post } from "csblogscraper";
 import { makeCustomId } from "../../handlers/interactions/index";
@@ -28,11 +31,12 @@ const command: Command = {
       hasPermission: (interaction: MessageComponentInteraction) =>
         interaction.user.id === interaction.message.interaction?.user.id,
       execute: async (interaction: MessageComponentInteraction) => {
-        if (!interaction.isSelectMenu()) return;
+        if (!interaction.isStringSelectMenu()) return;
         const page = parseInt(interaction.customId.split(":")[3]),
           posts = await getBlogPosts(page),
-          embeds = [makeEmbed(posts[parseInt(interaction.values[0])])],
-          components = [makeComponent(page, posts)];
+          selectedPost = parseInt(interaction.values[0]),
+          embeds = makeEmbeds(posts[selectedPost]),
+          components = makeComponents(page, posts, selectedPost);
         return void (await interaction.update({ embeds, components }));
       }
     }
@@ -43,37 +47,46 @@ const command: Command = {
       posts = await getBlogPosts(page).catch(() => []);
     if (!posts || !posts.length) return void interaction.reply("No posts found");
 
-    const embeds = [makeEmbed(posts[0])],
-      components = [makeComponent(page, posts)];
+    const embeds = makeEmbeds(posts[0]),
+      components = makeComponents(page, posts);
     return void interaction.reply({ embeds, components });
   }
 };
 
 export default command;
 
-function makeComponent(page: number, posts: Post[]) {
-  return {
-    type: ComponentType.ActionRow,
-    components: [
-      {
-        type: ComponentType.SelectMenu as const, // explain
-        customId: makeCustomId(command, `blog:${page}`),
-        options: posts.map((post, i) => ({
+function makeComponents(
+  page: number,
+  posts: Post[],
+  selectedPost = 0
+): ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>[] {
+  return [
+    new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+      new StringSelectMenuBuilder().setCustomId(makeCustomId(command, `blog:${page}`)).setOptions(
+        posts.map((post, i) => ({
           label: post.title,
           description: post.date.toDateString(),
           value: `${i}`
         }))
-      }
-    ]
-  };
+      )
+    ),
+    new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
+        .setStyle(ButtonStyle.Link)
+        .setURL(posts[selectedPost].link)
+        .setLabel("Link")
+    )
+  ];
 }
 
-function makeEmbed(post: Post): EmbedBuilder {
-  return new EmbedBuilder()
-    .setTitle(post.title)
-    .setURL(post.link)
-    .setFooter({ text: post.date.toDateString() })
-    .setDescription(post.content.slice(0, 4096))
-    .setImage(post.image)
-    .setColor("#2f3136");
+function makeEmbeds(post: Post): EmbedBuilder[] {
+  return [
+    new EmbedBuilder()
+      .setTitle(post.title)
+      .setURL(post.link)
+      .setFooter({ text: post.date.toDateString() })
+      .setDescription(post.content.slice(0, 4096))
+      .setImage(post.image ?? null)
+      .setColor("#2f3136")
+  ];
 }
