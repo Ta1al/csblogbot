@@ -62,10 +62,14 @@ async function getPosts(page: number) {
   let posts = command.cache?.get(page) as Post[];
   if (!posts) {
     posts = await getBlogPosts(page).catch(() => []);
-    command.cache?.set(page, posts);
-    setTimeout(() => command.cache?.delete(page), 60e4);
+    updateCache(page, posts);
   }
   return posts;
+}
+
+export function updateCache(page: number, posts: Post[]) {
+  command.cache?.set(page, posts);
+  setTimeout(() => command.cache?.delete(page), 60e4);
 }
 
 function makeComponents(
