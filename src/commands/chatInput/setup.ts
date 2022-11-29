@@ -2,13 +2,14 @@ import {
   ApplicationCommandOptionType,
   ButtonStyle,
   ChatInputCommandInteraction,
+  Collection,
   ComponentType,
   GuildMember,
   PermissionFlagsBits,
   TextBasedChannel
 } from "discord.js";
 import { Schema, model } from "mongoose";
-import { Command } from "../../handlers/interactions";
+import { Command, makeCustomId } from "../../handlers/interactions";
 
 const schema = new Schema({
   guildId: { type: String, required: true },
@@ -48,8 +49,33 @@ const command: Command = {
     ]
   },
 
+  components: [
+    {
+      name: "no",
+      execute: async interaction => {
+        return void interaction.update({ content: "Canceled", components: [] });
+      }
+    },
+    {
+      name: "yes",
+      execute: async interaction => {
+        await interaction.deferUpdate();
+        const data = command.cache?.get(interaction.message.interaction?.id) as data;
+        await Model.findByIdAndUpdate(data.documentId, data);
+        await (interaction.guild?.channels.cache.get(data.channelId) as TextBasedChannel).send(
+          `🎉 I will now send ${data.type} posts here.`
+        );
+        return void interaction.editReply({
+          content: `
+          ✅ <#${data.channelId}> is now setup for ${data.type} posts.`,
+          components: []
+        });
+      }
+    }
+  ],
+  cache: new Collection<string, data>(),
   execute: async (interaction: ChatInputCommandInteraction<"cached">) => {
-    const type = interaction.options.getString("type", true) as "blog" | "update";
+    const type = interaction.options.getString("type", true) as blogOrUpdate;
     const channel = interaction.options.getChannel("channel", true) as TextBasedChannel;
 
     if (isInavlid(channel, interaction.guild.members.me))
@@ -70,6 +96,12 @@ const command: Command = {
           content: `❌ This channel is already setup to receive ${type} posts`
         });
       }
+      command.cache?.set(interaction.id, {
+        guildId: interaction.guild.id,
+        channelId: channel.id,
+        type,
+        documentId: document._id
+      });
       return void interaction.editReply({
         content:
           `⚠ <#${document.channelId}> is already setup for ${type} posts. ` +
@@ -82,13 +114,13 @@ const command: Command = {
                 type: ComponentType.Button,
                 style: ButtonStyle.Danger,
                 label: "Yes, change it",
-                customId: "yes"
+                customId: makeCustomId(command, "yes")
               },
               {
                 type: ComponentType.Button,
                 style: ButtonStyle.Primary,
                 label: "No, keep it",
-                customId: "no"
+                customId: makeCustomId(command, "no")
               }
             ]
           }
@@ -120,4 +152,12 @@ function isInavlid(channel: TextBasedChannel, member: GuildMember | null) {
   )
     return true;
   return false;
+}
+
+type blogOrUpdate = "blog" | "update";
+interface data {
+  documentId: string;
+  guildId: string;
+  channelId: string;
+  type: blogOrUpdate;
 }
