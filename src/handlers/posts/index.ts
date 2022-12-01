@@ -15,7 +15,7 @@ export async function sendToChannels(client: Client, post: Post, type: "blog" | 
   for (const doc of docs) {
     const channel = await client.channels.fetch(doc.channelId) as TextBasedChannel;
     if (!channel) continue;
-    channel.send({ embeds: makeEmbeds(post) });
+    channel.send({ embeds: makeEmbeds(post) })
+      .catch(e => console.error(`Failed to send post to channel ${doc.channelId} of guild ${doc.guildId}`, e));
   }
-  return post + type;
 }
