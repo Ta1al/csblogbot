@@ -1,4 +1,5 @@
 import { getUpdatePosts } from "csblogscraper";
+import { Client } from "discord.js";
 import { Schema, model } from "mongoose";
 import { sendToChannels } from ".";
 import updateCommand from "../../commands/chatInput/updates";
@@ -7,7 +8,7 @@ const UpdatePostSchema = new Schema({
 });
 
 const UpdatePostDocument = model("UpdatePost", UpdatePostSchema);
-export default function handleUpdatePost() {
+export default function handleUpdatePost(client: Client) {
   setInterval(async () => {
     const posts = await getUpdatePosts();
     if (!posts) return;
@@ -23,7 +24,7 @@ export default function handleUpdatePost() {
         { postId: doc[0].id },
         { postId: posts[0].link.split("/").pop() }
       );
-      return sendToChannels(posts[0], "update");
+      return sendToChannels(client, posts[0], "update");
     }
   }, 360e4); // 1 hour
 }
