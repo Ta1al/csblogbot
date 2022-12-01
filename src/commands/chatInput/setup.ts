@@ -17,7 +17,7 @@ const schema = new Schema({
   type: { type: String, required: true }
 });
 
-const Model = model("channels", schema);
+export const Model = model("channels", schema);
 
 const command: Command = {
   data: {
