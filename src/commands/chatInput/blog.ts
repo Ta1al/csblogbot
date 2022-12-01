@@ -96,7 +96,7 @@ function makeComponents(
   ];
 }
 
-function makeEmbeds(post: Post): EmbedBuilder[] {
+export function makeEmbeds(post: Post): EmbedBuilder[] {
   return [
     new EmbedBuilder()
       .setTitle(post.title)
