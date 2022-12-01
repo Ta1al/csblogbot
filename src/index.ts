@@ -16,7 +16,7 @@ const client = new Client({
 client.once("ready", client => {
   if (!process.env.MONGO_URI) throw new Error("MONGO_URI is not defined");
   connect(process.env.MONGO_URI).then(() => console.log("Connected to MongoDB"));
-  handleNewPost();
+  handleNewPost(client);
   console.log("Ready as", client.user?.tag);
 });
 
